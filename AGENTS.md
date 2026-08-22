@@ -21,8 +21,8 @@
 - Use Unison programming language, version 1.3.0 to implement **k**.
 - The codebase is stored in UCM database.
 - Only use Unison standard library and approved libraries:
-  - `@unison/http`.
-  - `@unison/json`.
+  - `@unison/http@16.1.0`.
+  - `@unison/json@1.4.2`.
 - Prefer TDD approach, we will work to define the tests first, then treat the tests as source of truth to write the implementation. The test must be in Arrange / Act / Assert (AAA) format.
 - Git and Unison default branch must be `master`. Never use `main`.
 - Use mini-swe-agent v2 as the reference.
