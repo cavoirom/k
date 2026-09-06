@@ -28,6 +28,11 @@
 - Git and Unison default branch must be `master`. Never use `main`.
 - Use mini-swe-agent v2 as the reference.
 
+## Unison codebase
+
+- `k/master`: the first version of k, written as an experiment to understand how coding agent works.
+- `k/next`: the careful implementation of k, currently not yet existed.
+
 ## Unison namespaces
 
 - `k.config`:
@@ -36,6 +41,7 @@
 - `k.agents`: the control flow of the coding agent.
 - `k.environments`: execute agent actions.
 - `k.models`: connect to LLMs.
+- `k.shared`: contain shared data models to transfer data between components.
 
 ## Unison programming
 
@@ -61,3 +67,4 @@
   - UCM transcript command lines must begin with `> `.
   - Use `transcript.in-place` for operations intended to modify the working codebase. Plain `transcript` runs against a temporary sandbox.
   - When creating a UCM transcript, place a `.md` file inside the temporary directory.
+  - Use the Unison MCP server to get the current project and branch, never mis-identify the default branch as active branch.
