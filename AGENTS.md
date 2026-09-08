@@ -56,7 +56,7 @@ Use convention described in `./docs/unison-coding-convention.md`.
 - Code editing workflow:
   - Create new project branch from `k/master`.
   - Work on the created branch.
-  - Before merging, always present the UCM diff and test results, compile the program, then wait for explicit approval unless I initially asked you to merge.
+  - Before merging, always present the UCM diff and test results, compile the program to `k.uc`, then wait for explicit approval unless I initially asked you to merge.
   - Merge to `k/master` when approved.
   - Verify the merged result on `k/master`.
   - Delete the merged branch.
