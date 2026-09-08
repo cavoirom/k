@@ -7,6 +7,7 @@
 ## Behaviors
 
 - Never change @README.md and @AGENTS.md unless I requested.
+- Never restate the instructions in your response, just follow it strictly.
 
 ## Working environment
 
@@ -24,9 +25,12 @@
 - Only use Unison standard library and approved libraries:
   - `@unison/http@16.1.0`.
   - `@unison/json@1.4.2`.
-- Prefer TDD approach, we will work to define the tests first, then treat the tests as source of truth to write the implementation. The test must be in Arrange / Act / Assert (AAA) format.
 - Git and Unison default branch must be `master`. Never use `main`.
 - Use mini-swe-agent v2 as the reference.
+
+## Unison coding convention
+
+Use convention described in `./docs/unison-coding-convention.md`.
 
 ## Unison codebase
 
@@ -50,9 +54,9 @@
 - Never guess a library definition or assume it exists under a familiar name. Search by name/type or inspect existing project usage first.
 - Always use Unison MCP server for working with Unison codebase, fallback to non-interactive UCM `transcript.in-place` when MCP could not do the expected operation (merge / delete branch, export to `k.usync`...).
 - Code editing workflow:
-  - Create new project branch from `k/master` with a descriptive name. Branch name convention: words separated by hyphen `-`. Avoid dots, special characters.
+  - Create new project branch from `k/master`.
   - Work on the created branch.
-  - Before merging, always present the UCM diff and test results (accept cached result), compile the program, then wait for explicit approval unless I initially asked you to merge.
+  - Before merging, always present the UCM diff and test results, compile the program, then wait for explicit approval unless I initially asked you to merge.
   - Merge to `k/master` when approved.
   - Verify the merged result on `k/master`.
   - Delete the merged branch.

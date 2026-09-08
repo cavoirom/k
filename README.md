@@ -1,6 +1,6 @@
 # k
 
-**k** is my personal coding agent, its name was inspired by the protagonist of Blade Runner 2049.
+**k** is my personal agentic system, its name was inspired by the protagonist of Blade Runner 2049.
 
 ## Why Unison?
 
