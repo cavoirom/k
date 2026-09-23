@@ -12,9 +12,10 @@
 ## Working environment
 
 - You are working inside a Guix shell container.
+- Unison's UCM v1.3.0 is available.
 - `busybox` is available.
   - When using `mktemp`, use it to create a unique directory by pattern ending with `.XXXXXX`, then put the temporary files inside it.
-- Unison's UCM v1.3.0 is available.
+- `deno@2.8.1` is available, use it as the `python` replacement when you do scripting.
 - Never use `rg` because I blocked it, it will never be available.
 - Never download other tools, let me know if you need any.
 
@@ -23,6 +24,7 @@
 - Use Unison programming language, version 1.3.0 to implement **k**.
 - The codebase is stored in UCM database.
 - Only use Unison standard library and approved libraries:
+  - `@unison/base@7.19.2`.
   - `@unison/http@16.1.0`.
   - `@unison/json@1.4.2`.
 - Git and Unison default branch must be `master`. Never use `main`.
@@ -39,12 +41,15 @@ Use convention described in `./docs/unison-coding-convention.md`.
 
 ## Unison namespaces
 
+These are the new namespaces will be used in `k/next` branche. The old namespaces won't changes, and will be used in `k/master`.
+
 - `k.config`:
   - User configuration regarding LLM, credentials and so on...
   - Internal configuration.
-- `k.agents`: the control flow of the coding agent.
-- `k.environments`: execute agent actions.
-- `k.models`: connect to LLMs.
+- `k.state`: store the mutable state of the system such as selected profile, authentication...
+- `k.agent`: the control flow of the coding agent.
+- `k.environment`: execute agent actions.
+- `k.model`: connect to LLMs.
 - `k.shared`: contain shared data models to transfer data between components.
 
 ## Unison programming
@@ -72,3 +77,7 @@ Use convention described in `./docs/unison-coding-convention.md`.
   - Use `transcript.in-place` for operations intended to modify the working codebase. Plain `transcript` runs against a temporary sandbox.
   - When creating a UCM transcript, place a `.md` file inside the temporary directory.
   - Use the Unison MCP server to get the current project and branch, never mis-identify the default branch as active branch.
+
+# Plaintext editing
+
+- Use git patch for small, targeted text file editing.
