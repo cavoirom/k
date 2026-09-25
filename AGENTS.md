@@ -80,4 +80,4 @@ These are the new namespaces will be used in `k/next` branche. The old namespace
 
 # Plaintext editing
 
-- Use git patch for small, targeted text file editing.
+- Use git patch for small, targeted editing of existing file.
