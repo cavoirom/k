@@ -36,12 +36,12 @@ Use convention described in `./docs/unison-coding-convention.md`.
 
 ## Unison codebase
 
-- `k/master`: the first version of k, written as an experiment to understand how coding agent works.
-- `k/next`: the careful implementation of k, currently not yet existed.
+- `k/legacy`: the first version of k, written as an experiment to understand how coding agent works, currently frozen, should be exported to `k-legacy.usync`.
+- `k/master`: the careful implementation of k, currently in development, should be exported to `k.usync`.
 
 ## Unison namespaces
 
-These are the new namespaces will be used in `k/next` branche. The old namespaces won't changes, and will be used in `k/master`.
+These are the new namespaces used in `k/master`. The old namespaces remain in `k/legacy`.
 
 - `k.config`:
   - User configuration regarding LLM, credentials and so on...
@@ -57,27 +57,25 @@ These are the new namespaces will be used in `k/next` branche. The old namespace
 - Use non-interactive UCM with option `ucm --codebase "$PWD"`, treat Unison codebase as the source of truth, do not base on exported text files or modify database files directly.
 - Always consult [language reference](https://www.unison-lang.org/docs/#language-reference) before writing / updating code to program with correct syntax.
 - Never guess a library definition or assume it exists under a familiar name. Search by name/type or inspect existing project usage first.
-- Always use Unison MCP server for working with Unison codebase, fallback to non-interactive UCM `transcript.in-place` when MCP could not do the expected operation (merge / delete branch, export to `k.usync`...).
+- Always use Unison MCP server for working with Unison codebase, fallback to non-interactive UCM `transcript.in-place` when MCP could not do the expected operation (merge / delete branch, export to `k.usync`, run tests...).
 - Code editing workflow:
-  - Create new project branch from `k/master`.
+  - Create new project branch from default branch.
   - Work on the created branch.
   - Before merging, always present the UCM diff and test results, compile the program to `k.uc`, then wait for explicit approval unless I initially asked you to merge.
-  - Merge to `k/master` when approved.
-  - Verify the merged result on `k/master`.
+  - Merge to default branch when approved.
+  - Verify the merged result on default branch.
   - Delete the merged branch.
   - Export the codebase to `k.usync`.
-- `k.usync` must contain the complete exported `k/master` branch. Do not stage or commit it unless explicitly requested. Clean up any text file you produced after finishing your work.
+- `k.usync` must contain the complete exported default branch. Do not stage or commit it unless explicitly requested. Clean up any text file you produced after finishing your work.
 - Common tasks:
   - Compile the codebase, UCM transcript command: `> compile k.main ./k`. `k.main` is the entrypoint, the command will produce `k.uc` file in the current directory.
   - Compare branches: `> diff.branch k/master k/<branch>`.
   - Switch branch: `> switch k/<brach>`.
   - Export codebase: `> sync.to-file <absolute-path-to-k.usync>`.
+  - Run test: `> test <target>`.
 - Notes:
   - UCM transcript command lines must begin with `> `.
   - Use `transcript.in-place` for operations intended to modify the working codebase. Plain `transcript` runs against a temporary sandbox.
   - When creating a UCM transcript, place a `.md` file inside the temporary directory.
   - Use the Unison MCP server to get the current project and branch, never mis-identify the default branch as active branch.
 
-# Plaintext editing
-
-- Use git patch for small, targeted editing of existing file.
