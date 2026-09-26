@@ -168,11 +168,12 @@ type ModelError
 
 ```unison
 type ModelProvider = CodexProvider | OpenRouterProvider
-type ModelSpecification
+type ModelContext
   = {
     identifier: Text,
-    name: Text,
-    privider: Text
+    configuration:
+      name: Text,
+      reasoning_effort: ?
     instructions: [Text],
     tools: ?
   }
