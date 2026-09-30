@@ -4,6 +4,9 @@
 
 ## Naming
 
+- Append qualifiers to names.
+- Sort by most significant word (big endian naming).
+- Don't abbreviate.
 - Namespace: separate the hierarchy by dot `.`, use _snake_case_ for the hierarchy segments, the Type / Ability segment will follow their convention, e.g. `k.models.Codex`.
 - Type, data constructor: use _PascalCase_, e.g. `LocalShell`.
 - Ability: use _PascalCase_, e.g. `Model`.
@@ -18,7 +21,7 @@
 - `.tests` contains the pure, deterministic tests, including testing abilities with deterministic handlers. Cached result is acceptable.
 - `.io_tests` contains tests which actually use I/O, sub-processes, networking...
 - `.live_tests` contains a specific I/O tests that involves real systems that are risky to run automatically, e.g. calling LLM APIs. These tests are optional and will be requested explicitly.
-- Prefer TDD approach, we will work to define the tests first, then treat the tests as source of truth to write the implementation.
-- The test must be in Arrange / Act / Assert (AAA) format.
+- Use TDD approach, we will work to define the tests first, then treat the tests as source of truth to write the implementation.
+- The test must be in Arrange / Act / Assert (AAA) format, use `Text` to mark the comments in the tests because Unison remove commend when check-in the code.
 - On top of each test, write a description `Text` to explain the to be tested behavior and expectation so that we won't mis-understood the test when interfere its meaning from teh test code.
 - Prefer direct, flat test structure. Avoid unnecessary abstraction, hidden control. The test must be easy to read, understand and clean. Parameterized tests are acceptable.
