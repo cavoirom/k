@@ -40,8 +40,8 @@ Use convention described in `./docs/unison-coding-convention.md`.
 
 ## Unison codebase
 
-- `k/legacy`: the first version of k, written as an experiment to understand how coding agent works, currently frozen, should be exported to `k-legacy.usync`.
-- `k/master`: the careful implementation of k, currently in development, should be exported to `k.usync`.
+- `k/legacy`: the first version of k, written as an experiment to understand how coding agent works, currently frozen, should be exported to `src/legacy.usync`.
+- `k/master`: the careful implementation of k, currently in development, should be exported to `src/master.usync`.
 
 ## Unison namespaces
 
@@ -61,7 +61,7 @@ These are the new namespaces used in `k/master`. The old namespaces remain in `k
 - Use non-interactive UCM with option `ucm --codebase "$PWD"`, treat Unison codebase as the source of truth, do not base on exported text files or modify database files directly.
 - Always consult [language reference](https://www.unison-lang.org/docs/#language-reference) before writing / updating code to program with correct syntax.
 - Never guess a library definition or assume it exists under a familiar name. Search by name/type or inspect existing project usage first.
-- Always use Unison MCP server for working with Unison codebase, fallback to non-interactive UCM `transcript.in-place` when MCP could not do the expected operation (merge / delete branch, export to `k.usync`, run tests...).
+- Always use Unison MCP server for working with Unison codebase, fallback to non-interactive UCM `transcript.in-place` when MCP could not do the expected operation (merge / delete branch, export to `src/master.usync`, run tests...).
 - Code editing workflow:
   - Create new project branch from default branch.
   - Work on the created branch.
@@ -69,13 +69,13 @@ These are the new namespaces used in `k/master`. The old namespaces remain in `k
   - Merge to default branch when approved.
   - Verify the merged result on default branch.
   - Delete the merged branch.
-  - Export the codebase to `k.usync`.
-- `k.usync` must contain the complete exported default branch. Do not stage or commit it unless explicitly requested. Clean up any text file you produced after finishing your work.
+  - Export the codebase to `src/master.usync`.
+- `src/master.usync` must contain the complete exported default branch. Do not stage or commit it unless explicitly requested. Clean up any text file you produced after finishing your work.
 - Common tasks:
   - Compile the codebase, UCM transcript command: `> compile k.main ./k`. `k.main` is the entrypoint, the command will produce `k.uc` file in the current directory.
   - Compare branches: `> diff.branch k/master k/<branch>`.
   - Switch branch: `> switch k/<brach>`.
-  - Export codebase: `> sync.to-file <absolute-path-to-k.usync>`.
+  - Export codebase: `> sync.to-file <absolute-path-to-src/master.usync>`.
   - Run test: `> test <target>`.
 - Notes:
   - UCM transcript command lines must begin with `> `.
