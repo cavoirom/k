@@ -15,7 +15,7 @@
 - Unison's UCM v1.3.0 is available.
 - `busybox` is available.
   - When using `mktemp`, use it to create a unique directory by pattern ending with `.XXXXXX`, then put the temporary files inside it.
-- `deno@2.8.1` is available, use it as the `python` replacement when you do scripting.
+- `deno` is available, use it with JavaScript / TypeScript as the `python` replacement when you do scripting.
 - Never use `rg` because I blocked it, it will never be available.
 - Never download other tools, let me know if you need any.
 
@@ -29,6 +29,10 @@
   - `@unison/json@1.4.2`.
 - Git and Unison default branch must be `master`. Never use `main`.
 - Use mini-swe-agent v2 as the reference.
+
+## System blueprint
+
+See `./docs/k-blueprint.md`.
 
 ## Unison coding convention
 
@@ -61,7 +65,7 @@ These are the new namespaces used in `k/master`. The old namespaces remain in `k
 - Code editing workflow:
   - Create new project branch from default branch.
   - Work on the created branch.
-  - Before merging, always present the UCM diff and test results, compile the program to `k.uc`, then wait for explicit approval unless I initially asked you to merge.
+  - Before merging, always present the UCM diff and test results, compile the program to `k.uc` (only when working on `k/legacy`), then wait for explicit approval unless I initially asked you to merge.
   - Merge to default branch when approved.
   - Verify the merged result on default branch.
   - Delete the merged branch.
