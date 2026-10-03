@@ -8,6 +8,7 @@
 
 - Never change @README.md and @AGENTS.md unless I requested.
 - Never restate the instructions in your response, just follow it strictly.
+- Use ASD-STE100 Simplified Technical English in plans and documentation.
 
 ## Working environment
 
