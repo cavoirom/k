@@ -7,6 +7,7 @@
 - Append qualifiers to names.
 - Sort by most significant word (big endian naming).
 - Don't abbreviate.
+- Prefix `_` for internal functions, only apply for function and don't apply this for _local_ scope.
 - Namespace: separate the hierarchy by dot `.`, use _snake_case_ for the hierarchy segments, the Type / Ability segment will follow their convention, e.g. `k.models.Codex`.
 - Type, data constructor: use _PascalCase_, e.g. `LocalShell`.
 - Ability: use _PascalCase_, e.g. `Model`.
