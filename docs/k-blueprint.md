@@ -106,6 +106,145 @@ Configuration
     - provider: openrouter
     - reasoning-effort: medium
 
+### Thread
+
+- Thread is the working unit in the system. It provides the API for user-agent interaction.
+- Thread is not nested, but it could contain the messages of the specialist agent in specialist threads, these threads doesn't mean for interaction.
+
+```unison
+type Thread
+  = {
+    id : Uuid,
+    messages : [ThreadMessage],
+    specialist_threads : [SpecialistThread],
+    agent : Agent
+    -- Other fields omitted.
+  }
+
+type SpecialistThread
+  = {
+    id : Uuid,
+    messages : [SpecialistThreadMessage],
+    agent : Agent
+    -- Other fields omitted.
+  }
+
+type ThreadMessage
+  = UserMessage k.shared.model.UserMessage
+  | BotMessage k.shared.model.BotMessage
+  | BotThought k.shared.model.BotThought
+  | ToolCall k.shared.environment.ToolCall
+  | ToolResult k.shared.environment.ToolResult
+
+type SpecialistThreadMessage
+  = UserMessage k.shared.model.UserMessage
+  | BotMessage k.shared.model.BotMessage
+  | BotThought k.shared.model.BotThought
+  | ToolCall k.shared.environment.ToolCall
+  | StandardToolResult k.shared.environment.StandardToolResult
+
+type k.shared.environment.ToolResult
+  = SpecialistToolResult k.shared.environment.SpecialistToolResult
+  | StandardToolResult k.shared.environment.StandardToolResult
+
+type k.shared.environment.SpecialistToolResult
+  = {
+    id : Uuid,
+    tool_call_id : Uuid,
+    output : Text,
+    thread_id : Uuid
+  }
+```
+
+_(work in-progress)_
+
+### Environment
+
+```unison
+use k.shared.environment ToolCall ToolDefinition ToolResult
+
+structural ability k.environment.Environment where
+  tool_catalogue :
+    {Environment} [ToolDefinition]
+
+  execute_tool :
+    ToolCall
+    ->{Environment} Either k.shared.environment.EnvironmentError ToolResult
+
+structural type k.shared.environment.ErrorCode = ToolNotFound
+
+type k.shared.environment.EnvironmentError =
+  { code : k.shared.environment.ErrorCode
+  , message : Text
+  }
+```
+
+- `tool_catalogue`:
+  - Return available tools for the agent, based on configuration.
+  - Each agent role has different tool catalogue.
+  - The catalogue is fixed during the life time of the environment.
+- `execute_tool`:
+  - Run the given tool and arguments.
+  - Tool must be existed in the catalogue.
+
+_(work in-progress)_
+
+### Agent
+
+```unison
+type k.agent.Agent =
+  { role : Text
+  , current_turn : Optional k.agent.AgentTurn
+  , status : k.agent.AgentStatus
+  }
+
+type k.agent.AgentOperation = Query | Revise
+
+type k.agent.AgentTurn =
+  { operation : k.agent.AgentOperation
+  , messages : [k.shared.model.RequestMessage]
+  , remaining_tool_calls : [k.shared.environment.ToolCall]
+  }
+
+type k.agent.AgentStatus
+  = Ready
+  | QueryingModel
+  | ExecutingTools
+  | InterruptedModelError k.shared.model.ModelError
+  | InterruptedToolError k.shared.environment.EnvironmentError
+  | StoppedIncomplete
+
+type k.agent.ProcessingOutcome
+  = Completed
+  | Interrupted
+  | Incomplete
+  | Rejected
+
+k.agent.Agent.submit_user_message :
+  k.agent.Agent
+  -> k.shared.model.UserMessage
+  ->{k.environment.Environment, k.model.Model}
+    (k.agent.Agent, k.agent.ProcessingOutcome)
+
+k.agent.Agent.revise_user_message :
+  k.agent.Agent
+  -> k.shared.model.UserMessage
+  ->{k.environment.Environment, k.model.Model}
+    (k.agent.Agent, k.agent.ProcessingOutcome)
+
+k.agent.Agent.retry :
+  k.agent.Agent
+  ->{k.environment.Environment, k.model.Model}
+    (k.agent.Agent, k.agent.ProcessingOutcome)
+
+k.agent.Agent._process_messages :
+  k.agent.Agent
+  ->{k.environment.Environment, k.model.Model}
+    (k.agent.Agent, k.agent.ProcessingOutcome)
+```
+
+_(work in-progress)_
+
 ### Model
 
 #### Contract
@@ -150,54 +289,46 @@ Configuration
 Model ability
 
 ```unison
-structural ability Model where
-  query : ModelRequest -> Either ModelError ModelResponse
-  revise : ModelRequest -> Either ModelError ModelResponse
-  serialize: () -> Json
+structural ability k.model.Model where
+  query : ModelRequest ->{Model} Either ModelError ModelResponse
+  revise : ModelRequest ->{Model} Either ModelError ModelResponse
+  serialize : '{Model} Json
+
+type k.shared.model.ModelRequest = { messages : [RequestMessage] }
+
+type k.shared.model.RequestMessage = ToolResult ToolResult | UserMessage UserMessage
+
+type k.shared.model.UserMessage = { id : Uuid, content : Text }
+
+type k.shared.environment.ToolResult = SpecialistToolResult SpecialistToolResult | StandardToolResult StandardToolResult
+
+type k.shared.environment.SpecialistToolResult = { id : Uuid, tool_call_id : Uuid, output : Text, thread_id : Uuid }
+
+type k.shared.environment.StandardToolResult = { id : Uuid, tool_call_id : Uuid, output : Text }
+
+type k.shared.model.ModelResponse = { status : ResponseStatus, messages : [ResponseMessage] }
+
+type k.shared.model.ResponseStatus = Completed | Incomplete | NeedsToolResults
+
+type k.shared.model.ResponseMessage = BotMessage BotMessage | BotThought BotThought | ToolCall ToolCall
+
+type k.shared.model.BotMessage = { id : Uuid, content : Text }
+
+type k.shared.model.BotThought = { id : Uuid, content : Text }
+
+type k.shared.environment.ToolCall = { id : Uuid, name : Text, arguments : Json }
+
+structural type k.shared.model.ErrorCode = Authentication | AccessDenied | BadRequest | ServiceUnavailable | InvalidResponse | InvalidRevision
+
+type k.shared.model.ModelError = { code : ErrorCode, message : Text }
 ```
 
+- A Model response with status `NeedsToolResults` must contain at least one tool call; otherwise, the Model handler must return `InvalidResponse` without updating its context.
 - Model context is managed internally by the ability handler.
 - Model.query: submit new messages to push the conversation further. Only 1 query is executed at a time.
 - Model.revise: edit the existing message and re-submit to the LLM API for regeneration. This operation will update the context on success, preserve the preceding messages, replace the message content of the editing message, discard the following messages. When the request failed, leave the context unchanged. Discarding messages does not undo external effects.
 - Model.serialize: transform internal context to JSON for storage.
 - The JSON context can be used to initialize the Model.
-
-```unison
-type UserMessage = { id : Uuid, content : Text }
-
-type BotMessage = { id : Uuid, content : Text }
-
-type Thought = { id : Uuid, content : Text }
-
-type ToolCall = { id : Uuid, execution_id : Uuid, name : Text, arguments : Json }
-
-type ToolResult = { id : Uuid, execution_id : Uuid, output : Text }
-
-type RequestMessage = ToolResult ToolResult | UserMessage UserMessage
-
-type ResponseMessage = BotMessage BotMessage | Thought Thought | ToolCall ToolCall
-
-type ModelRequest = { messages : [RequestMessage] }
-
-type ModelResponse = { status : ResponseStatus, messages : [ResponseMessage] }
-
-type ResponseStatus = Completed | Incomplete | NeedsToolResults
-```
-
-```unison
-structural type ErrorCode
-  = Authentication
-  | AccessDenied
-  | BadRequest
-  | ServiceUnavailable
-  | InvalidResponse
-
-type ModelError
-  = {
-    code : ErrorCode,
-    message : Text
-  }
-```
 
 ```unison
 type ModelProvider = CodexProvider | OpenRouterProvider
@@ -280,3 +411,4 @@ Model.serialize and restoration:
 #### Cancel a query
 
 _(to be defined)_
+
