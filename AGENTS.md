@@ -6,15 +6,14 @@
 
 ## Behaviors
 
+- Use ASD-STE100 Simplified Technical English in your response. Present the information concisely. Don't provide example code unless I explicitly asked. Never restate the instructions, just follow it strictly.
 - Never change @README.md and @AGENTS.md unless I requested.
-- Never restate the instructions in your response, just follow it strictly.
-- Use ASD-STE100 Simplified Technical English in plans and documentation.
 
 ## Working environment
 
 - You are working inside a Guix shell container.
 - Unison's UCM v1.3.0 is available.
-- `busybox` is available.
+- `busybox` is used as the `coreutils` replacement. You should use correct `busybox` options of the utilities, don't assume the options from `coreutils`.
   - When using `mktemp`, use it to create a unique directory by pattern ending with `.XXXXXX`, then put the temporary files inside it.
 - `deno` is available, use it with JavaScript / TypeScript as the `python` replacement when you do scripting.
 - Never use `rg` because I blocked it, it will never be available.
@@ -83,4 +82,13 @@ These are the new namespaces used in `k/master`. The old namespaces remain in `k
   - Use `transcript.in-place` for operations intended to modify the working codebase. Plain `transcript` runs against a temporary sandbox.
   - When creating a UCM transcript, place a `.md` file inside the temporary directory.
   - Use the Unison MCP server to get the current project and branch, never mis-identify the default branch as active branch.
+
+## Review
+
+The check list for reviewing the work.
+
+- The tests, implementation must follow the plan strictly, no side-effect, no expanded scope.
+- The code must follow the coding conventions, established coding pattern in the codebase.
+- The tests must be effective, faithful to the specification and the code block contract in `./docs/k-blueprint.md`.
+- The implementation must be secure, clean and minimal.
 
